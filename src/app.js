@@ -1,3 +1,4 @@
+//DATA
 const studentsGradesList = [
   {
     name: "Miguel Jose Mata Ramos",
@@ -40,6 +41,67 @@ const studentsGradesList = [
     grades: [69, 85, 94, 52, 89, 41, 79],
   },
 ];
+
+//Elementos
+const selectListOfStudents = document.getElementById("selectListOfStudents");
+selectListOfStudents.add(new Option("Selecionar un Valor", 0, true));
+const sectionOfStudentGrades = document.getElementById(
+  "sectionOfStudentGrades"
+);
+
+studentsGradesList.forEach((studentGrades) => {
+  selectListOfStudents.add(new Option(studentGrades.name, studentGrades.name));
+});
+
+selectListOfStudents.onchange = function () {
+  const selectedStudent = selectListOfStudents.value;
+  sectionOfStudentGrades.innerHTML = `<h3>${selectedStudent}</h3>`;
+
+  const studentGradesFound = studentsGradesList.find(
+    (student) => student.name === selectedStudent
+  );
+
+  if (studentGradesFound) {
+    sectionOfStudentGrades.innerHTML += `<p>Notas: ${studentGradesFound.grades}</p>`;
+    let averige = calculateStudentAverige(studentGradesFound.grades);
+    sectionOfStudentGrades.innerHTML += `<p>Promedio: ${averige}</p>`;
+    sectionOfStudentGrades.innerHTML += `<p>Estatus: ${getStudentStatus(
+      averige
+    )}</p>`;
+    sectionOfStudentGrades.innerHTML += `<label>Agregar una Nota: </label><input type="number" id="newStudentGradeInput" name="newStudentGradeInput"/>
+      <button type="button" onclick="AddNewGrade()">Agregar</button>
+      <button type="button" onclick="RemoveLastGrade()">Remover Ultima Nota</button>`;
+  } else {
+    sectionOfStudentGrades = `No se han encontrado valores para: ${selectedStudent}`;
+  }
+};
+
+function AddNewGrade() {
+  const newGrade = parseInt(
+    document.getElementById("newStudentGradeInput").value
+  );
+  const selectedStudent = selectListOfStudents.value;
+
+  const studentGradesFound = studentsGradesList.find(
+    (student) => student.name === selectedStudent
+  );
+
+  studentGradesFound.grades.push(newGrade);
+  selectListOfStudents.value = selectedStudent;
+  selectListOfStudents.dispatchEvent(new Event("change"));
+}
+
+function RemoveLastGrade() {
+  const selectedStudent = selectListOfStudents.value;
+
+  const studentGradesFound = studentsGradesList.find(
+    (student) => student.name === selectedStudent
+  );
+
+  studentGradesFound.grades.pop();
+  selectListOfStudents.value = selectedStudent;
+  selectListOfStudents.dispatchEvent(new Event("change"));
+}
 
 function InterateStudentGrades() {
   for (let studentGrades of studentsGradesList) {
